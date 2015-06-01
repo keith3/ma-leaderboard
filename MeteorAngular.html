@@ -1,0 +1,894 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Meteor遇见AngularJS</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+}
+
+.slide-content {
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+  padding: 30px;
+
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.author h1 {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.05s ease-out;
+  -moz-transition: width 0.05s ease-out;
+  -o-transition: width 0.05s ease-out;
+  transition: width 0.05s ease-out;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  body {
+    font-size: 70%;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 120px;
+  }
+
+  .prev, .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .next, .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  .slide-content {
+    padding: 10px;
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  .hidden {
+    display: inline;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  .slide {
+    position: static;
+  }
+
+  .slide-content {
+    border: 1px solid #222;
+    margin-top: 0;
+    margin-bottom: 40px;
+    height: 3.5in;
+    overflow: visible;
+  }
+
+  .slide:nth-child(even) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+code, pre {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: auto;
+  padding: 6px 10px;
+}
+
+code {
+  padding: 0 5px;
+}
+
+pre>code {
+  margin: 0; padding: 0;
+  border: none;
+  background: transparent;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+  <div class="slide" id="slide-1">
+    <section class="slide-content"><h1 id="meteor">Meteor</h1>
+<p>Company , Platform, JavaScript Framework</p>
+<ul>
+<li>Meteor: 开发框架</li>
+<li>Galaxy: 应用托管平台</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-2">
+    <section class="slide-content"><h3 id="whats-meteor">Whats Meteor</h3>
+<p><a href="https://www.meteor.com/">Meteor</a> is a complete open source <strong>platform</strong> for building web and mobile apps in pure JavaScript.</p>
+<h3 id="the-meteor-mission">The Meteor mission</h3>
+<p>Build a new platform for cloud applications that will become as ubiquitous as previous platforms such as Unix, HTTP, and the relational database.</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-3">
+    <section class="slide-content"><h3 id="meteor-subprojects">Meteor Subprojects</h3>
+<ul>
+<li><p>Libraries
+Blaze (a user interface library) and Tracker (a system for transparent reactive programming);</p>
+</li>
+<li><p>Tools
+Isobuild, a complete build system;</p>
+</li>
+<li><p>Standards
+DDP (Distributed Data Protocol), which is like &quot;REST for websockets&quot;;</p>
+</li>
+<li><p>Services
+Official package server and a build farm.</p>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-4">
+    <section class="slide-content"><h3 id="core-projects">Core Projects</h3>
+<ul>
+<li>Blaze
+Reactive UI Library</li>
+<li>Tracker
+Reactive programming made easy</li>
+<li>DDP (Distributed Data Protocol)
+Websocket-based data protocol</li>
+<li>Livequery
+Live database connectors</li>
+<li>Full Stack Database Drivers
+User the same database API on client and server</li>
+<li>Isobuild
+Unified build system for browser, server, and mobile</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden  " id="slide-5">
+    <section class="slide-content"><h3 id="quick-demo">Quick Demo</h3>
+<pre><code class="lang-bash">$ meteor create --example leaderboard</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  " id="slide-6">
+    <section class="slide-content"><h3 id="-">特性</h3>
+<p>实时性，多客户端同时刷新，加载快</p>
+<ul>
+<li>Latency compensation (延迟补偿)</li>
+<li>客户端渲染视图</li>
+<li>Publish &amp; Subscribe (发布与订阅)</li>
+<li>客户端数据缓存</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-7">
+    <section class="slide-content"><h3 id="meteor-">Meteor实现原理</h3>
+<p><img src="http://7b1ezf.com1.z0.glb.clouddn.com/meteor-work.png" alt="images">
+￼</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-8">
+    <section class="slide-content"><h3 id="-">重要概念</h3>
+<ol>
+<li><a href="http://zh.discovermeteor.com/chapters/publications-and-subscriptions/">发布与订阅 (publications and subscriptions)</a><ul>
+<li><a href="http://www.alloyteam.com/2012/10/commonly-javascript-design-pattern-observer-mode/">观察者模式</a></li>
+<li>漏斗，客户端得到的数据是服务端过滤后的结果</li>
+<li>服务器不再发送 HTML 代码到客户端，而是推送原始数据</li>
+<li>不必等待服务器传回数据，而是立即访问甚至修改数据 (延迟补偿)</li>
+</ul>
+</li>
+<li><a href="http://zh.discovermeteor.com/chapters/latency-compensation/">延迟补偿 (latency compensation)</a><ul>
+<li>客户端即时响应，客户端本地模拟数据库操作</li>
+<li>服务端响应返回操作结果</li>
+</ul>
+</li>
+</ol>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-9">
+    <section class="slide-content"><h3 id="-">安全？</h3>
+<ul>
+<li>meteor remove autopublish  insecure</li>
+<li><a href="https://www.discovermeteor.com/blog/meteor-methods-client-side-operations/">Meteor Methods vs Client-Side Operations</a></li>
+<li>collection.allow &amp; deny 限制客户端，secure模式默认deny all</li>
+<li>使用Meteor.methods而不是客户端调用insert, update, remove...</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-10">
+    <section class="slide-content"><h2 id="meteor-angularjs">Meteor + AngularJS</h2>
+<p>MEAN ?</p>
+<ul>
+<li>MongoDB + Express + AngularJS + Node.js + Grunt/Gulp</li>
+<li>Meteor + AngularJS</li>
+<li><a href="http://info.meteor.com/blog/thoughts-on-angular-meteor-as-a-great-mean-stack">Thoughts on angular-meteor as a great MEAN Stack</a></li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-11">
+    <section class="slide-content"><h3 id="angularjs-blaze-">AngularJS比Blaze好？</h3>
+<ul>
+<li>共同点<ul>
+<li>数据绑定</li>
+<li>模板组件</li>
+</ul>
+</li>
+<li>AngularJS<ul>
+<li>MV* 开发模式</li>
+<li>路由</li>
+</ul>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-12">
+    <section class="slide-content"><h3 id="angularjs-meteor-demo">AngularJS + Meteor Demo</h3>
+<p>目录结构</p>
+<pre><code class="lang-bash">.
+├── both                        // 目录下的文件在客户端与服务器都会运行，它们也是应用启动后最先运行的代码
+│   └── collections             // 数据库各个表的model定义
+│       └── users.js
+├── client                      // 只在客户端运行的代码
+│   ├── css                     // css样式文件夹
+│   ├── index.html              // 唯一的.html文件，自定义的angular视图模板需要<span class="string">'以.ng.html结尾'</span>
+│   ├── lib                     // lib文件夹比较特殊，目录下存放客户端下最先加载的文件，<span class="string">'注意不要写成libs'</span>
+│   │   └── app.js              // 推荐在这里定义angular.module()
+│   ├── modules                 // 定义模块
+│   │   └── users
+│   │       ├── controllers           
+│   │       │   └── users.js
+│   │       └── views              
+│   │           └── index.ng.html
+│   └── route.js                // 路由配置文件
+├── public                      // 存放资源文件，包括字体，图片等
+└── server                      // 只在服务端运行的代码
+    ├── collections             // 定义各个collection的数据库操作权限
+    │   └── users.js  
+    ├── methods                 // 定义方法
+    │   └── users.js
+    └── publish                 // 发布数据
+        └── users.js</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-13">
+    <section class="slide-content"><h3 id="init-packages">Init packages</h3>
+<pre><code class="lang-bash">$ meteor remove autopublish insecure
+$ meteor add urigo:angular angularui:angular-ui-router</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-14">
+    <section class="slide-content"><h3 id="leaderboard-demo-with-meteor-angularjs">Leaderboard Demo with Meteor + AngularJS</h3>
+<pre><code class="lang-bash">$ git clone git@github.com:keith3/ma-leaderboard.git
+$ cd ma-leaderboard 
+$ meteor
+`</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-15">
+    <section class="slide-content"><h3 id="-">开发中的一些坑</h3>
+<ul>
+<li>目录结构及文件命名</li>
+<li>环境变量MONGO_URL</li>
+<li>部署后初始化，添加管理员用户</li>
+<li>...</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-16">
+    <section class="slide-content"><h2 id="-meteor-package">开发Meteor Package</h2>
+<p>为什么不用Npm
+<a href="https://github.com/meteor/meteor/pull/516#issuecomment-12919473"><a href="https://github.com/meteor/meteor/pull/516#issuecomment-12919473">https://github.com/meteor/meteor/pull/516#issuecomment-12919473</a></a></p>
+<ul>
+<li>客户端与服务端</li>
+<li>包内文件类型多样</li>
+<li>包命名，官方包与个人包</li>
+<li>部署钩子与配置，(email)</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-17">
+    <section class="slide-content"><h3 id="-npm-meteor-package">示例：在Npm模块基础上开发Meteor package</h3>
+<p>有关Npm接口的代码只能用在server端。</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-18">
+    <section class="slide-content"><h3 id="-">步骤</h3>
+<ul>
+<li>注册Meteor账号</li>
+<li>终端登录<pre><code class="lang-bash">$ meteor login</code></pre>
+</li>
+<li>创建package<pre><code class="lang-bash">$ meteor create --package validator
+$ cd validator</code></pre>
+<pre><code>.
+├── package.js                      // 包的配置
+├── README.md
+├── validator.js                     // 代码主体
+└── validator-tests.js            // 测试代码</code></pre>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-19">
+    <section class="slide-content"><h3 id="validator-js">validator.js</h3>
+<pre><code>validaotr = Npm.require(&#39;validator&#39;)</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-20">
+    <section class="slide-content"><h3 id="package-js">package.js</h3>
+<pre><code>Package.describe({
+  name: &#39;validator&#39;,
+  version: &#39;0.0.1&#39;,
+  summary: &#39;&#39;,
+  git: &#39;&#39;,
+  documentation: &#39;README.md&#39;
+});
+
+// 重点
+Package.onUse(function(api) {
+  api.versionsFrom(&#39;1.1.0.2&#39;);
+  api.addFiles(&#39;validator.js&#39;, &#39;server&#39;);
+  //  api.export(&#39;validator&#39;, [&#39;server&#39;, &#39;client&#39;]);
+  api.export(&#39;validator&#39;, &#39;server&#39;);            // validator 变量需要在validator.js中声明，不要加var
+});
+
+Package.onTest(function(api) {
+  ...
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-21">
+    <section class="slide-content"><h3 id="-">本地测试</h3>
+<pre><code class="lang-bash">$ meteor create package-test
+$ cd package-test
+$ mkdir package
+$ ln -s package/dir/ validator
+$ meteor add validator</code></pre>
+<p>在meteor应用的server部分直接调用validator全局变量</p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-22">
+    <section class="slide-content"><h3 id="-">发布</h3>
+<pre><code class="lang-bash">$ meteor publish</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-23">
+    <section class="slide-content"><h2 id="meteor-">Meteor应用部署</h2>
+<ul>
+<li><a href="https://github.com/arunoda/meteor-up">mup</a></li>
+<li>手动</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-24">
+    <section class="slide-content"><h3 id="-">本地打包</h3>
+<pre><code class="lang-bash">$ meteor build meteor/app/dir</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-25">
+    <section class="slide-content"><h3 id="-">服务器环境</h3>
+<ul>
+<li><a href="https://github.com/ekalinin/nodeenv">nodeenv</a></li>
+<li><a href="https://github.com/Unitech/PM2">PM2</a>是一个带有负载均衡功能的Node应用的进程管理器。</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-26">
+    <section class="slide-content"><h3 id="-">步骤</h3>
+<pre><code class="lang-bash"><span class="comment"># 局部安装</span>
+$ virtualenv env
+$ source env/bin/activate
+(env) $ pip install nodeenv
+(env) $ nodeenv meteorenv
+(env) $ source meteorenv/bin/active
+<span class="comment"># 安装指定版本的Node.js和Npm</span>
+(env)(meteorenv) $ nodeenv --node=0.10.36 --prebuilt env-0.10.36-prebuilt  --npm=1.4.28
+<span class="comment"># 虚拟环境中全局安装PM2</span>
+(env)(meteorenv) $ npm install -g pm2
+<span class="comment"># 解压app.tar.gz</span>
+(env)(meteorenv) $ tar zxf app.tar.gz
+(env)(meteorenv) $ cd bundle/programs/server
+(env)(meteorenv) $ npm install</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-27">
+    <section class="slide-content"><h3 id="-">启动服务</h3>
+<pre><code class="lang-bash">$ export MONGO_URL=mongodb://localhost/app PORT=4000 ROOT_URL=http://domain.name pm2 start main.js</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-28">
+    <section class="slide-content"><h2 id="q-a">Q &amp; A</h2>
+<ol>
+<li>国内没人用Meteor？<ul>
+<li>公司并没有在国内市场做什么推广，现阶段主要针对北美市场</li>
+<li>Meteor 是个全栈框架，目前国内的技术大环境下，前端后端分开依然是主流，有合适场景使用 Meteor 的公司并不多</li>
+<li>国内用 Meteor 的 package server 会受到 GFW 的影响</li>
+</ul>
+</li>
+<li>Meteor的适用场景？<ul>
+<li>实时数据是 Meteor 的核心价值</li>
+<li>最终目标是让 Meteor 适合大部分常见的应用类型 </li>
+</ul>
+</li>
+<li>把angular-meteor的开发者加入Meteor开发组的目的？<ul>
+<li>推广的原因</li>
+<li>平台开放化 ，让开发者能够更自由地选择前端组件</li>
+</ul>
+</li>
+</ol>
+<p>Answers from <a href="https://github.com/yyx990803">Evan You</a></p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-29">
+    <section class="slide-content"><div class="author">
+  <h1 class="name">卢峰</h1>
+    <h3 class="url">
+      <a href="http://lufeng.me">http://lufeng.me</a>
+    </h3>
+</div>
+</section>
+  </div>
+
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  /* Positions are 1-indexed, so we need to add and subtract 1 */
+  var nextPosition = (position - 1 + n) % numSlides + 1;
+
+  /* Normalize nextPosition in-case of a negative modulo result */
+  nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+  document.getElementById('slide-' + position).classList.add('hidden');
+  document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+
+  updateProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPosition());
+}
+
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+         document.mozFullScreenElement ||
+         document.webkitFullscreenElement ||
+         document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+      docElem.requestFullscreen ||
+      docElem.msRequestFullscreen ||
+      docElem.mozRequestFullScreen ||
+      docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+      doc.exitFullscreen ||
+      doc.msExitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1);
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1);
+    } else if (kc === 13) {
+      toggleFullScreen();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      navigate(1);
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      navigate(-1);
+    };
+  }
+});
+
+
+  </script>
+</body>
+</html>
