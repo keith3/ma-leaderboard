@@ -1,0 +1,17 @@
+<div class="outer">
+    <div class="logo"></div>
+    <h1 class="title">Leaderboard</h1>
+    <div class="subtitle">Select a scientist to give them points</div>
+    <ol class="leaderboard">
+      <li ng-repeat="team in teams | orderBy: '-score'" 
+        ng-click="selectTeam(team._id, team.name)" 
+        ng-class="{player: true, selected: team._id == selectedId }">
+            <span class="name">{{ team.name }}</span>
+            <span class="score">{{ team.score }}</span>
+        </li>
+    </ol>
+    <div class="details">
+      <div class="name">{{ selectedName }}</div>
+      <button class="inc" ng-click="updateScore(5)">Add 5 points</button>
+    </div>
+</div>
